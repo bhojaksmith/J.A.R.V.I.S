@@ -32,9 +32,9 @@ while(1):
                     print("Activated!")
                     activ=True
             if activ:
-                text=""
+                text="A"
                 
-                print("Listening for commands ... ")           
+                print("Speak anything ... ")           
                 r.adjust_for_ambient_noise(source2, duration=2)
                 audio2 = r.listen(source2) 
                 print("Processing...")
@@ -43,15 +43,28 @@ while(1):
                 text = r.recognize_google(audio2) 
                 text = text.lower() 
                 print("Did you say '"+text+"'")
+                if(text=='search'):
+                     print('What do you want to search?....')
+                     r.adjust_for_ambient_noise(source2, duration=2)
+                     audio2 = r.listen(source2) 
+                     print("Processing...")
+                     platf=platform.system()
 
+                     text = r.recognize_google(audio2) 
+                     text = text.lower() 
+
+                     print("Searching for  '"+text+"'")
+            
+                     os.system("start www.google.com/search?q="+text)
+                     exit()
                 if(text=='good night'):
                      print('pc shutting down....')
                      playsound('caged_goodnight.mp3')
                      if(platf=="Linux"):
-                       # os.system("shutdown")
+                        os.system("shutdown")
                         print("shutdown scheduled after 1 minute...")
                      else:
-                        #os.system("shutdown /s /t 2")
+                        os.system("shutdown /s /t 2")
                      exit(); 
 
                 if(text=="sleep"):
