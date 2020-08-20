@@ -11,15 +11,15 @@ t = {'1':1,'one':1,'two':2,'three':3,'four':4,'five':5,'six':6,'seven':7,'eight'
     #remove inside later
   
 
-language = 'en'
+language = 'en-IN'
 #player = MPyg321Player()
 engine = pyttsx3.init()
 #player.play_song("/path/to/some_mp3.mp3")
     
 r = sr.Recognizer()  
 platf=platform.system()
-r.energy_threshold = 3500 
-r.pause_threshold = 0.6
+r.energy_threshold = 300
+r.pause_threshold = 0.5
 def SpeakText(command): 
     engine = pyttsx3.init() 
     engine.say(command)  
@@ -40,7 +40,7 @@ with sr.Microphone() as source2:
 
                 text = r.recognize_google(audio2) 
                 text = text.lower() 
-                #print("Did you say '"+text+"'")
+                print("you said '"+text+"'")
                 if 'hey jarvis' in text or 'jarvis' in text:
                     print("Listening now!\n")
                     #SpeakText("Listening for your command ...")
@@ -51,9 +51,8 @@ with sr.Microphone() as source2:
                 print("What do you want to do? ... ")
                 SpeakText("What do you want to do\n")
                 print("\nThings you can say \n Search \n Set a timer \n Open Calculator \n Open Browser \n see help.txt for all commands")
-                query = r.listen(source2,timeout=4) 
-                
-      
+              
+                query = r.listen(source2,timeout=3) 
                 
                 print("\n\nProcessing...\n\n")
   
@@ -66,7 +65,7 @@ with sr.Microphone() as source2:
                 if('search' in text):
                     print('\n\nWhat do you want to search?....\n\n')
                     SpeakText('What do you want to search')
-                    searchQuery = r.listen(source2) 
+                    searchQuery = r.listen(source2,timeout=3) 
                     print("Processing...")
                     
                     text = r.recognize_google(searchQuery) 
@@ -92,7 +91,7 @@ with sr.Microphone() as source2:
                 elif('timer' in text):
                     print("\n\nHow many minutes?\n\n")
                     SpeakText('How many minutes?')
-                    searchQuery = r.listen(source2,timeout=4) 
+                    searchQuery = r.listen(source2,timeout=3) 
                     print("\n\nProcessing...\n\n")
                     
                     text = r.recognize_google(searchQuery) 
@@ -108,7 +107,7 @@ with sr.Microphone() as source2:
                         print('\n\nSetting a timer for '+  text +'Minutes\n\n')
                         SpeakText('Setting a timer for '+  text +'Minutes') 
                         
-                        timer = threading.Timer(int(text), timerX) 
+                        timer = threading.Timer(int(text)*60, timerX) 
                         timer.start() 
                     else:
                         try:    
@@ -135,18 +134,17 @@ with sr.Microphone() as source2:
                     
                         
                     
-                
+                # Windows Only
                 elif('browser' in text):
                     os.system('start www.google.com')
                 elif('calculator' in text):
                     os.system('calc')
-                elif('calender' in text):
+                elif('calendar' in text):
                     os.system('calc')
                 elif('camera' in text):
                     os.system('start microsoft.windows.camera:')
                 elif('photos' in text):
-                    os.system('start ms-ph:')
-                
+                    os.system('start ms-ph:')        
                 elif('exit' in text):
                     print("Good bye sir !")
                     SpeakText('Good Bye ....... Sir')
