@@ -25,7 +25,7 @@ def SpeakText(command):
     engine.runAndWait() 
 
 
-#feature functions
+#feature functions for windows
 def browser():
     os.system('start www.google.com')
 def calculator():
