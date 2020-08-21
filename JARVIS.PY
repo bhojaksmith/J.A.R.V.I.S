@@ -25,7 +25,7 @@ def SpeakText(command):
     engine.runAndWait() 
 
 
-#feature functions for windows
+#feature functions
 def browser():
     os.system('start www.google.com')
 def calculator():
@@ -45,7 +45,7 @@ def search():
     searchQuery = r.listen(source2,timeout=6) 
     # The timeout parameter is the maximum number of seconds 
     # that it will wait for a phrase to start before giving up 
-    # and throwing a TimeoutException exception. If None, it will wait indefinitely.
+    # and throwing a TimeoutException exception. If Value not specified, it will wait indefinitely.
 
     print("Processing...")
     
@@ -76,40 +76,44 @@ def timerX():
     text = text.lower() 
     
     print("\n\nDid you say '"+text+"'\n\n")
-
+    timerStarted = False
     def timerExpired(): 
         print("\n\nTimer Expired\n") 
-        
-    timerStarted = False
-    if(text.isdigit()):
-        print('\n\nSetting a timer for '+  text +'Minutes\n\n')
-        SpeakText('Setting a timer for '+  text +'Minutes') 
-        
-        timer = threading.Timer(int(text)*60, timerExpired) 
-        timer.start() 
+        SpeakText('Timer Expired')
+    if not timerStarted:
+        if(text.isdigit()):
+            print('\n\nSetting a timer for '+  text +'Minutes\n\n')
+            SpeakText('Setting a timer for '+  text +'Minutes') 
+            
+            timer = threading.Timer(int(text), timerExpired) 
+            timer.start() 
+        else:
+            try:    
+                print('\n\nSetting a timer for '+  timerMap[text] +' Minutes\n\n')
+                SpeakText('Setting a timer for '+  timerMap[text] +' Minutes') 
+                timer = threading.Timer(timerMap[text], timerExpired) 
+                timerStarted = True
+                timer.start()
+            except KeyError:
+                print('Please Try again')
+                SpeakText('Invalid Value , Please Try again') 
+            
     else:
-        try:    
-            print('\n\nSetting a timer for '+  timerMap[text] +' Minutes\n\n')
-            SpeakText('Setting a timer for '+  timerMap[text] +' Minutes') 
-            timer = threading.Timer(timerMap[text], timerExpired) 
-            timerStarted = True
-            timer.start()
-        except KeyError:
-            print('Please Try again')
-            SpeakText('Invalid Value , Please Try again')        
+        print('Say Cancel to cancel timer')
+        SpeakText('Say Cancel to cancel timer')
+        
+        searchQuery = r.listen(source2,timeout=6) 
+        print("Processing Cancel...")
+        
+        text = r.recognize_google(searchQuery) 
+        text = text.lower() 
+        if('cancel' in text):
+            print("Cancelling timer\n") 
+            timer.cancel() 
+                
 
     
-    print('Say Cancel to cancel timer')
-    SpeakText('Say Cancel to cancel timer')
-    
-    searchQuery = r.listen(source2,timeout=6) 
-    print("Processing Cancel...")
-    
-    text = r.recognize_google(searchQuery) 
-    text = text.lower() 
-    if(text=="cancel"):
-        print("Cancelling timer\n") 
-        timer.cancel()    
+       
 functionDict = {
     'browser':browser,
     'Open browser':browser,
@@ -128,6 +132,7 @@ functionDict = {
     'take a screenshot':search,
     'set a timer':timerX,
     'timer':timerX,
+    'cancel timer':timerX
 }
 activ=False
 with sr.Microphone() as source2: 
