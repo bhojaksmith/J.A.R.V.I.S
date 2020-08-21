@@ -74,16 +74,16 @@ def timerX():
     
     text = r.recognize_google(searchQuery) 
     text = text.lower() 
-    
+
     print("\n\nDid you say '"+text+"'\n\n")
     timerStarted = False
     def timerExpired(): 
         print("\n\nTimer Expired\n") 
-        SpeakText('Timer Expired')
+
     if not timerStarted:
         if(text.isdigit()):
-            print('\n\nSetting a timer for '+  text +'Minutes\n\n')
-            SpeakText('Setting a timer for '+  text +'Minutes') 
+            print('\n\nSetting a timer for '+  text +' Minutes\n\n')
+            SpeakText('Setting a timer for '+  text +' Minutes') 
             
             timer = threading.Timer(int(text), timerExpired) 
             timer.start() 
@@ -94,6 +94,7 @@ def timerX():
                 timer = threading.Timer(timerMap[text], timerExpired) 
                 timerStarted = True
                 timer.start()
+                
             except KeyError:
                 print('Please Try again')
                 SpeakText('Invalid Value , Please Try again') 
@@ -131,6 +132,7 @@ functionDict = {
     'screenshot':search,
     'take a screenshot':search,
     'set a timer':timerX,
+    'set timer':timerX,
     'timer':timerX,
     'cancel timer':timerX
 }
