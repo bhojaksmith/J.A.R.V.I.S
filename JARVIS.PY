@@ -1,16 +1,21 @@
+import os
 import speech_recognition as sr 
 import pyttsx3  
 import platform
 import threading 
-import os
 
 language = 'en-IN'
+platf=platform.system()
 
 text=''
 engine = pyttsx3.init()
 platf=platform.system()
+
+
 timerMap = {'one':1,'two':2,'three':3,'four':4,'five':5,'six':6,'seven':7,'eight':8,'nine':9,'ten':10}
-    
+# While setting timer if speechrecognition picks up numbers as words
+
+
 r = sr.Recognizer()  
 
 r.energy_threshold = 300
@@ -27,17 +32,35 @@ def SpeakText(command):
 
 #feature functions
 def browser():
-    os.system('start www.google.com')
+    if(platf=="Linux"):
+        os.system("gio open https://www.google.com")
+    else:
+        os.system("start https://www.google.com")
 def calculator():
-    os.system('calc')
+    if(platf=="Linux"):
+        os.system("gnome-calculator")
+    else:
+        os.system('calc')
 def calendar():
-    os.system('start outlookcal:')
+    if(platf=="Linux"):
+        os.system('start outlookcal:')
+    else:
+        os.system("gnome-calendar")
 def photos():
-    os.system('start ms-photos:')
+    if(platf=="Linux"):
+        os.system('start ms-photos:')
+    else:
+        print("Not Available !")
 def screenshot():
-    os.system('start ms-screenclip:')
+    if(platf=="Linux"):
+        os.system('start ms-screenclip:')
+    else:
+        os.system("gnome-screenshot")
 def mail():
-    os.system('outlookmail:')    
+    if(platf=="Linux"):
+        os.system('outlookmail:')    
+    else:
+        os.system("thunderbird")
 def search():
     print('\n\nWhat do you want to search?....\n\n')
     SpeakText('What do you want to search')
@@ -85,13 +108,13 @@ def timerX():
             print('\n\nSetting a timer for '+  text +' Minutes\n\n')
             SpeakText('Setting a timer for '+  text +' Minutes') 
             
-            timer = threading.Timer(int(text), timerExpired) 
+            timer = threading.Timer(int(text)*60, timerExpired) 
             timer.start() 
         else:
             try:    
                 print('\n\nSetting a timer for '+  timerMap[text] +' Minutes\n\n')
                 SpeakText('Setting a timer for '+  timerMap[text] +' Minutes') 
-                timer = threading.Timer(timerMap[text], timerExpired) 
+                timer = threading.Timer(timerMap[text]*60, timerExpired) 
                 timerStarted = True
                 timer.start()
                 
@@ -158,7 +181,7 @@ with sr.Microphone() as source2:
             if activ:
                 print("What do you want to do? ... ")
                 SpeakText("What do you want to do\n")
-                print("\nThings you can say \n  Open Calculator \n Open Browser \n see help.txt for all commands")
+                print("\nThings you can say \n  Open Calculator \n  Open web browser \n Shutdown OR Good night \n set a timer\nsee help.txt for all commands")
                 
                 query = r.listen(source2,timeout=6) 
                 
