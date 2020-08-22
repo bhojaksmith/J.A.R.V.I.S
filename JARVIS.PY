@@ -1,77 +1,206 @@
-
-import os 
-import platform
-
-
+import os
 import speech_recognition as sr 
 import pyttsx3  
-  
+import platform
+import threading 
+
+language = 'en-IN'
+platf=platform.system()
+
+text=''
+engine = pyttsx3.init()
+platf=platform.system()
+
+
+timerMap = {'one':1,'two':2,'three':3,'four':4,'five':5,'six':6,'seven':7,'eight':8,'nine':9,'ten':10}
+# While setting timer if speechrecognition picks up numbers as words
+
+
 r = sr.Recognizer()  
-  
+
+r.energy_threshold = 300
+# (150-4000) Higher value if it tries to recognize when it shouldn’t, and a lower value if it doesn’t recognize when it should.
+
+r.pause_threshold = 0.5
+#Represents the minimum length of silence (in seconds) that will register as the end of a phrase.
+
 def SpeakText(command): 
     engine = pyttsx3.init() 
     engine.say(command)  
     engine.runAndWait() 
-activ=False
-while(1):     
+
+
+#feature functions
+def browser():
+    if(platf=="Linux"):
+        os.system("gio open https://www.google.com")
+    else:
+        os.system("start https://www.google.com")
+def calculator():
+    if(platf=="Linux"):
+        os.system("gnome-calculator")
+    else:
+        os.system('calc')
+def calendar():
+    if(platf=="Linux"):
+        os.system('start outlookcal:')
+    else:
+        os.system("gnome-calendar")
+def photos():
+    if(platf=="Linux"):
+        os.system('start ms-photos:')
+    else:
+        print("Not Available !")
+def screenshot():
+    if(platf=="Linux"):
+        os.system('start ms-screenclip:')
+    else:
+        os.system("gnome-screenshot")
+def mail():
+    if(platf=="Linux"):
+        os.system('outlookmail:')    
+    else:
+        os.system("thunderbird")
+def search():
+    print('\n\nWhat do you want to search?....\n\n')
+    SpeakText('What do you want to search')
     
-    try: 
-        with sr.Microphone() as source2: 
-            r.adjust_for_ambient_noise(source2, duration=2) 
-            if not activ :
-                print("Speak \"Jarvis\" to activate ... ")           
+    searchQuery = r.listen(source2,timeout=6) 
+    # The timeout parameter is the maximum number of seconds 
+    # that it will wait for a phrase to start before giving up 
+    # and throwing a TimeoutException exception. If Value not specified, it will wait indefinitely.
 
-                audio2 = r.listen(source2) 
-                print("Processing...")
-                platf=platform.system()
+    print("Processing...")
+    
+    text = r.recognize_google(searchQuery) 
+    text = text.lower() 
+    SpeakText('Searching for '+text+' on the web')
+    
+    #print("Searching for  '"+text+"'")
 
-                text = r.recognize_google(audio2) 
-                text = text.lower() 
-                #print("Did you say '"+text+"'")
-                if text=="jarvis" :
-                    print("Activated!")
-                    activ=True
-            if activ:
-                text="A"
-                
-                print("Speak anything ... ")           
-                r.adjust_for_ambient_noise(source2, duration=2)
-                audio2 = r.listen(source2) 
-                print("Processing...")
-                platf=platform.system()
+    os.system("start www.google.com/search?q="+text)
+    exit()
+def shutdown():
+    print('PC shutting down....')
+    #playsound('caged_goodnight.mp3')
+    if(platf=="Linux"):
+        os.system("shutdown")
+        print("shutdown scheduled after 1 minute...")
+    else:
+        os.system("shutdown /s /t 2")
+        exit()
+def timerX():
+    print("\n\nHow many minutes?\n\n")
+    SpeakText('How many minutes?')
+    searchQuery = r.listen(source2,timeout=6) 
+    print("\n\nProcessing...\n\n")
+    
+    text = r.recognize_google(searchQuery) 
+    text = text.lower() 
 
-                text = r.recognize_google(audio2) 
-                text = text.lower() 
-                print("Did you say '"+text+"'")
-                if(text=='search'):
-                     print('What do you want to search?....')
-                     r.adjust_for_ambient_noise(source2, duration=2)
-                     audio2 = r.listen(source2) 
-                     print("Processing...")
-                     platf=platform.system()
+    print("\n\nDid you say '"+text+"'\n\n")
+    timerStarted = False
+    def timerExpired(): 
+        print("\n\nTimer Expired\n") 
 
-                     text = r.recognize_google(audio2) 
-                     text = text.lower() 
-
-                     print("Searching for  '"+text+"'")
+    if not timerStarted:
+        if(text.isdigit()):
+            print('\n\nSetting a timer for '+  text +' Minutes\n\n')
+            SpeakText('Setting a timer for '+  text +' Minutes') 
             
-                     os.system("start www.google.com/search?q="+text)
-                     exit()
-                if(text=='good night'):
-                     print('pc shutting down....')
-                     playsound('caged_goodnight.mp3')
-                     if(platf=="Linux"):
-                        os.system("shutdown")
-                        print("shutdown scheduled after 1 minute...")
-                     else:
-                        os.system("shutdown /s /t 2")
-                     exit(); 
+            timer = threading.Timer(int(text)*60, timerExpired) 
+            timer.start() 
+        else:
+            try:    
+                print('\n\nSetting a timer for '+  timerMap[text] +' Minutes\n\n')
+                SpeakText('Setting a timer for '+  timerMap[text] +' Minutes') 
+                timer = threading.Timer(timerMap[text]*60, timerExpired) 
+                timerStarted = True
+                timer.start()
+                
+            except KeyError:
+                print('Please Try again')
+                SpeakText('Invalid Value , Please Try again') 
+            
+    else:
+        print('Say Cancel to cancel timer')
+        SpeakText('Say Cancel to cancel timer')
+        
+        searchQuery = r.listen(source2,timeout=6) 
+        print("Processing Cancel...")
+        
+        text = r.recognize_google(searchQuery) 
+        text = text.lower() 
+        if('cancel' in text):
+            print("Cancelling timer\n") 
+            timer.cancel() 
+                
 
-                if(text=="sleep"):
-                    print("Good bye sir !")
-              
-    except sr.RequestError as e: 
-        print("Could not request results; {0}".format(e)) 
-          
-    except sr.UnknownValueError: 
-        print("Coudln't Understand please try again !")
+    
+       
+functionDict = {
+    'browser':browser,
+    'Open browser':browser,
+    'Open web browser':browser,
+    'calculator':calculator,
+    'open calculator':calculator,
+    'calendar':calendar,
+    'open calendar':calendar,
+    'photos':photos,
+    'open photos':photos,
+    'good night':shutdown,
+    'shutdown':shutdown,
+    'search':search,
+    'search for':search,
+    'screenshot':search,
+    'take a screenshot':search,
+    'set a timer':timerX,
+    'set timer':timerX,
+    'timer':timerX,
+    'cancel timer':timerX
+}
+activ=False
+with sr.Microphone() as source2: 
+    r.adjust_for_ambient_noise(source2, duration=1)
+    while(1):    
+        try:
+            if not activ :
+                 # print("kem palty")
+                print("Say \"Hey Jarvis\" to speak to Jarvis... ")           
+                audio2 = r.listen(source2,timeout=None) 
+                print("Processing...\n")
+                
+
+                text = r.recognize_google(audio2) 
+                text = text.lower() 
+                print("you said '"+text+"'")
+            if 'hey jarvis' in text or 'jarvis' in text:
+                print("Listening now!\n")
+                #SpeakText("Listening for your command ...")
+                activ=True
+            if activ:
+                print("What do you want to do? ... ")
+                SpeakText("What do you want to do\n")
+                print("\nThings you can say \n  Open Calculator \n  Open web browser \n Shutdown OR Good night \n set a timer\nsee help.txt for all commands")
+                
+                query = r.listen(source2,timeout=6) 
+                
+                print("\n\nProcessing...\n\n")
+
+                text = r.recognize_google(query) 
+                print('\n\nProcessed!\n\n')
+                text = text.lower() 
+
+                
+                print("\n\nDid you say '"+text+"'\n\n")
+                
+                #calling function dynamically 
+                functionDict[text]()
+            
+
+        except sr.RequestError as e: 
+            print("Could not request results; {0}".format(e)) 
+                
+        except sr.UnknownValueError: 
+            print("Couldn't Understand please try again !")
+            SpeakText('Could not Understand please try again')
