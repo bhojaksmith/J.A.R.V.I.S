@@ -4,7 +4,7 @@ _MD5 6256020CAA10F2683ABAE7D150D77DBE_<br><br>
  JARVIS is voice based interaction system that can perform certain tasks for you
 We have created this system to work in Windows 10 & GNOME based Linux operating systems. 
  To start simply execute the file Jarvis.exe
-Say “Jarvis” or “Hey Jarvis” to activate make jarvis listen for your commands
+Say “Jarvis” or “Hey Jarvis” to make jarvis listen for your commands
 
 ## Supported Features / Commands
 
