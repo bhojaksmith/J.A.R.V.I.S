@@ -211,7 +211,7 @@ with sr.Microphone() as source2:
                 time.sleep(3)
                 print("\nThings you can say \n  Open Calculator \n  Open web browser \n  Shutdown OR Good night \n  Set a timer")
                 print("  Open Calendar \n  Take a screenshot \n  Search  \n  Open Photos")
-                print("see help.txt for all commands")
+                print("see help.md for all commands")
                 # try:
                 query = r.listen(source2) 
                 # except Exception as e:
