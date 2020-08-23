@@ -1,0 +1,21 @@
+  Supported Commands
+  	
+    'browser':browser,
+    'Open browser':browser,
+    'Open web browser':browser,
+    'calculator':calculator,
+    'open calculator':calculator,
+    'calendar':calendar,
+    'open calendar':calendar,
+    'photos':photos,
+    'open photos':photos,
+    'good night':shutdown,
+    'shutdown':shutdown,
+    'search':search,
+    'search for':search,
+    'screenshot':search,
+    'take a screenshot':search,
+    'set a timer':timerX,
+    'set timer':timerX,
+    'timer':timerX,
+    'cancel timer':timerX
